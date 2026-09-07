@@ -5,6 +5,36 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+### Changed — `PendingPayment` gains the receipt id, and the verify/reject callbacks hand back that (NIAGA-245)
+
+- **BREAKING for consumers of `@niaga/lib-ui/admin/payments/PendingPaymentsTable`**, of which there is
+  exactly one: `frontend-admin`'s `payments/pending` page. Verified by grep across `frontend-admin/src` and
+  `frontend-storefront` before changing the interface.
+- `PendingPayment` gains **`id`** — the **receipt's** own id, not the order's — and `onVerify` / `onReject`
+  now receive **that** id instead of `orderId`. The table's row `key` follows.
+- **Why: the old shape could not have worked.** `service-order`'s endpoints are
+  `PUT /api/v1/admin/payments/:id/{verify,reject}` and parse `:id` as the payment-receipt uuid, looking it
+  up with `GetReceiptByID`. The table handed over `orderId`. Both are uuids, so it would parse cleanly and
+  then find nothing — a lookup miss, not a validation error.
+- The interface carries that reasoning as a doc comment on the field, so the next person to wire this table
+  does not have to re-derive which uuid the backend wants.
+- `tsc --noEmit` **0 errors**. lib-ui has no CI (it has no workflows at all — see the workspace
+  `ci-known-red.txt`), so that is the whole of the automated check available here.
+- **THIS ACTIVELY BREAKS `frontend-admin`'s COMPILE UNTIL THE COMPANION LANDS — it does not merely fail to
+  fix it.** An earlier draft of this entry said "this alone does not fix the page", which undersold it.
+  `frontend-admin` links this package as `"@niaga/lib-ui": "file:../lib-ui"`, so the change is live in its
+  tree the moment this branch exists: `npx tsc --noEmit` there now fails with
+  `TS2741: Property 'id' is missing … but required in type 'PendingPayment'` at
+  `payments/pending/page.tsx:21`. Review found it; I reproduced it before writing this.
+- **That makes the merge ORDER load-bearing, not just conventional.** `frontend-admin`'s CI clones lib-ui
+  from **`main`** (NIAGA-194), so its build cannot go green until this merges — and its `main` is red from
+  the moment this lands until the companion does. The window is real and unavoidable in this direction;
+  it is kept to minutes by merging the two back to back, libs first. **Making `id` optional to dodge it was
+  considered and rejected:** an optional field lets the wrong uuid keep flowing silently, which is the
+  entire bug.
+- `frontend-admin` still calls the wrong paths with the wrong verbs and the wrong body field names; that
+  half is the same ticket and lands immediately after this one.
+
 ### Changed — the brand lives in one constant, not four components (NIAGA-109)
 
 - **`src/brand.ts` is new and exported as `@niaga/lib-ui/brand`.** It holds `BRAND_NAME` (`Niaga`) and the
