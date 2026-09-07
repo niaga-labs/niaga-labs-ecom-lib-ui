@@ -20,9 +20,20 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
   does not have to re-derive which uuid the backend wants.
 - `tsc --noEmit` **0 errors**. lib-ui has no CI (it has no workflows at all — see the workspace
   `ci-known-red.txt`), so that is the whole of the automated check available here.
-- **This alone does not fix the page.** `frontend-admin` still calls the wrong paths with the wrong verbs and
-  the wrong body field names; that half is the same ticket, landing next in the cross-repo order
-  libs → frontends.
+- **THIS ACTIVELY BREAKS `frontend-admin`'s COMPILE UNTIL THE COMPANION LANDS — it does not merely fail to
+  fix it.** An earlier draft of this entry said "this alone does not fix the page", which undersold it.
+  `frontend-admin` links this package as `"@niaga/lib-ui": "file:../lib-ui"`, so the change is live in its
+  tree the moment this branch exists: `npx tsc --noEmit` there now fails with
+  `TS2741: Property 'id' is missing … but required in type 'PendingPayment'` at
+  `payments/pending/page.tsx:21`. Review found it; I reproduced it before writing this.
+- **That makes the merge ORDER load-bearing, not just conventional.** `frontend-admin`'s CI clones lib-ui
+  from **`main`** (NIAGA-194), so its build cannot go green until this merges — and its `main` is red from
+  the moment this lands until the companion does. The window is real and unavoidable in this direction;
+  it is kept to minutes by merging the two back to back, libs first. **Making `id` optional to dodge it was
+  considered and rejected:** an optional field lets the wrong uuid keep flowing silently, which is the
+  entire bug.
+- `frontend-admin` still calls the wrong paths with the wrong verbs and the wrong body field names; that
+  half is the same ticket and lands immediately after this one.
 
 ### Changed — the brand lives in one constant, not four components (NIAGA-109)
 

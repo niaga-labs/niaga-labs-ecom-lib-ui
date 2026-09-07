@@ -16,6 +16,11 @@ export interface PendingPayment {
      * then found nothing. NIAGA-245.
      */
     id: string;
+    /**
+     * Kept for consumers; this component no longer reads it. The table displays
+     * `orderNumber` and keys/callbacks on `id`. It stays on the type because the page
+     * that builds these objects maps it and it is the link back to the order.
+     */
     orderId: string;
     orderNumber: string;
     customerName: string;
