@@ -41,7 +41,7 @@
         "./warehouse/*": "./src/warehouse/*.tsx"
     },
     "scripts": {
-        "type-check": "tsc --noEmit"
+      "type-check": "tsc --noEmit"
     },
     "dependencies": {
         "clsx": "^2.1.1",
