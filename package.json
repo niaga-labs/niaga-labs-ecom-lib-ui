@@ -38,17 +38,7 @@
         "./admin/users/users": "./src/admin/users/users.ts",
         "./admin/users/*": "./src/admin/users/*.tsx",
         "./warehouse": "./src/warehouse/index.ts",
-        "./warehouse/*": "./src/warehouse/*.tsx",
-        "./agent": "./src/agent/index.ts",
-        "./agent/api": "./src/agent/api.ts",
-        "./agent/commissions/*": "./src/agent/commissions/*.tsx",
-        "./agent/customers/*": "./src/agent/customers/*.tsx",
-        "./agent/dashboard": "./src/agent/dashboard/index.ts",
-        "./agent/dashboard/*": "./src/agent/dashboard/*.tsx",
-        "./agent/layout/*": "./src/agent/layout/*.tsx",
-        "./agent/orders/*": "./src/agent/orders/*.tsx",
-        "./agent/performance/*": "./src/agent/performance/*.tsx",
-        "./hooks/useAgent": "./src/hooks/useAgent.ts"
+        "./warehouse/*": "./src/warehouse/*.tsx"
     },
     "scripts": {
       "type-check": "tsc --noEmit"
