@@ -5,6 +5,25 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+### Changed — `PendingPayment` gains the receipt id, and the verify/reject callbacks hand back that (NIAGA-245)
+
+- **BREAKING for consumers of `@niaga/lib-ui/admin/payments/PendingPaymentsTable`**, of which there is
+  exactly one: `frontend-admin`'s `payments/pending` page. Verified by grep across `frontend-admin/src` and
+  `frontend-storefront` before changing the interface.
+- `PendingPayment` gains **`id`** — the **receipt's** own id, not the order's — and `onVerify` / `onReject`
+  now receive **that** id instead of `orderId`. The table's row `key` follows.
+- **Why: the old shape could not have worked.** `service-order`'s endpoints are
+  `PUT /api/v1/admin/payments/:id/{verify,reject}` and parse `:id` as the payment-receipt uuid, looking it
+  up with `GetReceiptByID`. The table handed over `orderId`. Both are uuids, so it would parse cleanly and
+  then find nothing — a lookup miss, not a validation error.
+- The interface carries that reasoning as a doc comment on the field, so the next person to wire this table
+  does not have to re-derive which uuid the backend wants.
+- `tsc --noEmit` **0 errors**. lib-ui has no CI (it has no workflows at all — see the workspace
+  `ci-known-red.txt`), so that is the whole of the automated check available here.
+- **This alone does not fix the page.** `frontend-admin` still calls the wrong paths with the wrong verbs and
+  the wrong body field names; that half is the same ticket, landing next in the cross-repo order
+  libs → frontends.
+
 ### Changed — the brand lives in one constant, not four components (NIAGA-109)
 
 - **`src/brand.ts` is new and exported as `@niaga/lib-ui/brand`.** It holds `BRAND_NAME` (`Niaga`) and the

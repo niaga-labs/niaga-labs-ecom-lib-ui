@@ -7,6 +7,15 @@ import { Button } from '@niaga/lib-ui/primitives/button';
 import PaymentVerifyModal from './PaymentVerifyModal';
 
 export interface PendingPayment {
+    /**
+     * The RECEIPT's own id, not the order's.
+     *
+     * service-order's verify/reject endpoints are PUT /admin/payments/:id/{verify,reject}
+     * and parse `:id` as the payment-receipt uuid, looking it up with GetReceiptByID. The
+     * table used to hand `orderId` to those callbacks; both are uuids, so it parsed and
+     * then found nothing. NIAGA-245.
+     */
+    id: string;
     orderId: string;
     orderNumber: string;
     customerName: string;
@@ -23,8 +32,10 @@ export interface PendingPayment {
 
 interface PendingPaymentsTableProps {
     payments: PendingPayment[];
-    onVerify: (orderId: string, note: string) => Promise<void>;
-    onReject: (orderId: string, reason: string) => Promise<void>;
+    /** Receives the RECEIPT id (`PendingPayment.id`), not the order id — see above. */
+    onVerify: (receiptId: string, note: string) => Promise<void>;
+    /** Receives the RECEIPT id (`PendingPayment.id`), not the order id — see above. */
+    onReject: (receiptId: string, reason: string) => Promise<void>;
     onRefresh: () => void;
 }
 
@@ -91,7 +102,7 @@ export default function PendingPaymentsTable({ payments, onVerify, onReject, onR
 
     const handleVerify = async (note: string) => {
         if (selectedPayment) {
-            await onVerify(selectedPayment.orderId, note);
+            await onVerify(selectedPayment.id, note);
             setSelectedPayment(null);
             onRefresh();
         }
@@ -99,7 +110,7 @@ export default function PendingPaymentsTable({ payments, onVerify, onReject, onR
 
     const handleReject = async (reason: string) => {
         if (selectedPayment) {
-            await onReject(selectedPayment.orderId, reason);
+            await onReject(selectedPayment.id, reason);
             setSelectedPayment(null);
             onRefresh();
         }
@@ -177,7 +188,7 @@ export default function PendingPaymentsTable({ payments, onVerify, onReject, onR
                                     </tr>
                                 ) : (
                                     filteredPayments.map((payment) => (
-                                        <tr key={payment.orderId} className="hover:bg-gray-50 transition">
+                                        <tr key={payment.id} className="hover:bg-gray-50 transition">
                                             <td className="px-6 py-4 whitespace-nowrap">
                                                 <div className="flex items-center gap-2">
                                                     {getUrgencyBadge(payment.uploadedAt)}
