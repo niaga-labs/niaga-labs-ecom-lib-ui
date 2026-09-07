@@ -5,6 +5,47 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+### Removed — the orphaned `src/agent` module and its exports (NIAGA-132)
+
+- Deleted `src/agent/**` (**32 files** across six subdirectories — commissions, customers, dashboard, layout,
+  orders, performance) and `src/hooks/useAgent.ts`, and removed their entries from `package.json`.
+  **Exports 42 → 32.**
+- **It can be restored from git if the agent portal returns** — `git log --diff-filter=D -- src/agent` finds
+  this commit, and nothing about the deletion is lossy. The storefront agent portal is NIAGA-140, still To Do;
+  if it is built, these components are a `git checkout` away rather than a rewrite.
+- **The export count was 10, not the 9 the ticket and my first pass both said.** The tenth is
+  `"./hooks/useAgent"`, missed because a case-sensitive `grep agent` does not match `useAgent`. Caught by an
+  assertion in the edit script rather than by reading — the script refused to run when the key count did not
+  match what it had been told to expect, which is the only reason the hook's export would not have been left
+  dangling behind a deleted file.
+
+#### Confirming it was really orphaned — and one search that proved nothing
+
+The ticket asks for zero importers across the three frontends. The first pass searched
+`frontend-*/src` and found none anywhere, which was **wrong for one of them**:
+
+| repo | ts/tsx files | `@niaga/lib-ui` imports (control) | agent-module hits |
+|---|---|---|---|
+| frontend-admin | 230 | 319 | **0** |
+| frontend-storefront | 272 | 3 | **0** |
+| frontend-warehouse | 24 | 12 | **0** |
+
+- **`frontend-storefront` has no `src/` directory at all.** Its 272 files live in `app/`, `components/`,
+  `lib/` and `hooks/`. So the original `frontend-storefront/src` search matched nothing because there was
+  nothing there to match — a zero that looked exactly like an answer. Re-run against the real tree, its
+  control finds 3 real lib-ui imports and still 0 agent hits.
+- **Every row above carries a non-zero control on purpose.** A search that finds no agent imports is only
+  evidence if the same search finds the imports that *are* there; otherwise it is indistinguishable from a
+  search that did no work.
+- Widening from `src/` to the whole repo also moved admin's control from 313 to **319**, so six of its lib-ui
+  imports live outside `src/` too.
+- Nothing inside `lib-ui` itself referenced `src/agent` or `useAgent` either, so no internal import dangles.
+
+- Checks: `npm run type-check` **exit 0** in lib-ui, unchanged from the baseline taken before the deletion ·
+  `npm install` in lib-ui, then **all three frontends built: `npm run build` exit 0 and "Compiled
+  successfully" for `frontend-admin`, `frontend-storefront` and `frontend-warehouse`**, which is this ticket's
+  done-when · all three frontend trees left clean.
+
 ### Changed — `PendingPayment` gains the receipt id, and the verify/reject callbacks hand back that (NIAGA-245)
 
 - **BREAKING for consumers of `@niaga/lib-ui/admin/payments/PendingPaymentsTable`**, of which there is
