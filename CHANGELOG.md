@@ -5,6 +5,19 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+### Fixed — `package-lock.json` is tracked, so installs are reproducible (NIAGA-197)
+
+- Commit 8a742ad untracked the lockfile, on the grounds that the consumers' lockfiles cover lib-ui. They
+  do not: lib-ui ships `.tsx` source, and Node resolves its imports from lib-ui's own location, so lib-ui
+  needs its own `node_modules` (found in NIAGA-194). The `.gitignore` line is removed and says why.
+- The lockfile was generated on `node:20` / npm 10.8.2, the `NODE_VERSION` the frontend workflows pin.
+  lockfileVersion 3, 227 entries; 199 packages install on linux, most of them auto-installed peers.
+- Proof on `node:20`, from two fresh copies: `npm ci --ignore-scripts` exit 0 both times, and
+  `npm ls --all --parseable --long` gave identical 200-line listings (same sha256). A `package.json` edited
+  without the lockfile makes `npm ci` fail with EUSAGE ("not in sync"), which is the point.
+  `tsc --noEmit` exit 0 on the installed copy.
+- The frontends' CI switches `npm install --prefix ../lib-ui` to `npm ci` in their own PRs.
+
 ### Changed — React 19 / Next 15 compatible (NIAGA-314)
 
 - `peerDependencies` now accept both lines: `next` `^14.2.33 || ^15.5.24`, `react` / `react-dom`
