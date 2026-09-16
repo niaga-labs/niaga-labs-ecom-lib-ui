@@ -42,11 +42,11 @@ const CollapsibleTrigger = React.forwardRef<
 >(({ className, children, asChild, ...props }, ref) => {
     const { open, onOpenChange } = React.useContext(CollapsibleContext);
 
-    if (asChild && React.isValidElement(children)) {
+    if (asChild && React.isValidElement<React.HTMLAttributes<HTMLElement>>(children)) {
         return React.cloneElement(children, {
             ...props,
             "data-state": open ? "open" : "closed",
-            onClick: (e: React.MouseEvent) => {
+            onClick: (e: React.MouseEvent<HTMLElement>) => {
                 onOpenChange(!open);
                 children.props.onClick?.(e);
             },
