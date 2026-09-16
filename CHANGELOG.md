@@ -5,6 +5,12 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+### Added — Claude Code layer (NIAGA-273)
+
+- `CLAUDE.md` at the repo root (product, Jira key, the `file:` symlink gotcha, the brand-constant
+  convention) plus `.claude/` (memory, resume point, settings). Verified: `npm run type-check` — clean,
+  0 errors.
+
 ### Removed — the orphaned `src/agent` module and its exports (NIAGA-132)
 
 - Deleted `src/agent/**` (**32 files** across six subdirectories — commissions, customers, dashboard, layout,

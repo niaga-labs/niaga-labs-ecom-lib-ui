@@ -10,3 +10,7 @@
 node_modules/
 package-lock.json
 tsconfig.tsbuildinfo
+
+# Claude Code layer
+.claude/settings.local.json
+CLAUDE.local.md
