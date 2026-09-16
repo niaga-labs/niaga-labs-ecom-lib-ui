@@ -5,10 +5,11 @@
 .DS_Store
 *.log
 
-# Dependencies and build artifacts (lib-ui is consumed via file:../lib-ui;
-# package-lock is intentionally not tracked — see commit 8a742ad)
+# Dependencies and build artifacts. package-lock.json IS tracked (NIAGA-197):
+# lib-ui's own imports resolve from lib-ui's real location, so it needs its own
+# reproducible node_modules; the frontends' lockfiles never cover it. That
+# disproves the premise of 8a742ad, which untracked it.
 node_modules/
-package-lock.json
 tsconfig.tsbuildinfo
 
 # Claude Code layer
