@@ -5,6 +5,16 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+### Changed — React 19 / Next 15 compatible (NIAGA-314)
+
+- `peerDependencies` now accept both lines: `next` `^14.2.33 || ^15.5.24`, `react` / `react-dom`
+  `^18.3.1 || ^19.0.0`. The frontends are moving to Next 15 one at a time.
+- `devDependencies` `@types/react` / `@types/react-dom` → `^19.3.0`. A consumer's `tsc` checks lib-ui's
+  source against lib-ui's own `node_modules/@types/react`. With the 18 types there, frontend-warehouse on
+  React 19 failed: `React.ReactNode` from 19 is not assignable to 18's `ReactNode` (the `bigint` member).
+- `primitives/collapsible.tsx`: the `asChild` clone types the child's props, because React 19's
+  `isValidElement` narrows them to `unknown`. `npm run type-check` exits 0.
+
 ### Added — Claude Code layer (NIAGA-273)
 
 - `CLAUDE.md` at the repo root (product, Jira key, the `file:` symlink gotcha, the brand-constant
