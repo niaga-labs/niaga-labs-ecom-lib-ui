@@ -16,7 +16,7 @@ rules live in `~/.claude/`; this file only adds what is specific here.
 
 | Task | Command |
 |---|---|
-| install | `npm install` |
+| install | `npm ci` — `package-lock.json` is tracked (NIAGA-197). After changing `package.json`, regenerate it with `npm install` on npm 10 (the frontends' CI Node 20), or every frontend CI fails at `npm ci --prefix ../lib-ui` |
 | type-check | `npm run type-check` (`tsc --noEmit`) — the only script this repo has; no test suite, no build step |
 
 **Verified 2026-09-13:** `npm run type-check` — clean, 0 errors.
