@@ -70,8 +70,8 @@ export default function BannerForm({
     fallbackImageSrc,
     renderLocationExtras,
 }: BannerFormProps) {
-    const [previewImage, setPreviewImage] = useState(initialData?.image_desktop || '');
-    const [previewMobileImage, setPreviewMobileImage] = useState(initialData?.image_mobile || '');
+    const [previewImage, setPreviewImage] = useState(initialData?.imageDesktop || '');
+    const [previewMobileImage, setPreviewMobileImage] = useState(initialData?.imageMobile || '');
 
     const {
         register,

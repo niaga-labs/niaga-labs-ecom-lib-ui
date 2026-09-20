@@ -68,16 +68,21 @@ export default function CollectionForm({
     const [previewUrl, setPreviewUrl] = useState<string>('');
     const fileInputRef = useRef<HTMLInputElement>(null);
 
+    // initialData is a Collection -- a READ type, camelCase since NIAGA-389.
+    // formData is InternalFormState, which feeds CollectionFormData, the
+    // REQUEST body -- snake_case, because service-catalog binds snake_case and
+    // request bodies are forwarded verbatim (NIAGA-365). The two sides of this
+    // assignment differ on purpose.
     const [formData, setFormData] = useState<InternalFormState>({
         name: initialData?.name || '',
         description: initialData?.description || '',
-        image_url: initialData?.image_url || '',
-        collection_type: initialData?.collection_type || 'manual',
-        sort_order: initialData?.sort_order || 'manual',
-        meta_title: initialData?.meta_title || '',
-        meta_desc: initialData?.meta_desc || '',
-        is_active: initialData?.is_active ?? true,
-        category_ids: initialData?.category_ids || [],
+        image_url: initialData?.imageUrl || '',
+        collection_type: initialData?.collectionType || 'manual',
+        sort_order: initialData?.sortOrder || 'manual',
+        meta_title: initialData?.metaTitle || '',
+        meta_desc: initialData?.metaDesc || '',
+        is_active: initialData?.isActive ?? true,
+        category_ids: initialData?.categoryIds || [],
     });
 
     // Sync selectedCategories whenever the form's category_ids or the source list changes.

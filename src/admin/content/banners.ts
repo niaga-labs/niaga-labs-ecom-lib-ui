@@ -1,28 +1,28 @@
 export interface Banner {
     id: string;
     name: string;
-    banner_type: string;
+    bannerType: string;
     location: string;
     title?: string;
     subtitle?: string;
     description?: string;
-    image_desktop: string;
-    image_mobile?: string;
-    video_url?: string;
-    cta_text?: string;
-    cta_url?: string;
-    text_position?: string;
-    text_color?: string;
-    overlay_color?: string;
-    overlay_opacity?: number;
-    start_date?: string;
-    end_date?: string;
-    is_active: boolean;
-    sort_order: number;
-    click_count?: number;
-    view_count?: number;
-    created_at: string;
-    updated_at: string;
+    imageDesktop: string;
+    imageMobile?: string;
+    videoUrl?: string;
+    ctaText?: string;
+    ctaUrl?: string;
+    textPosition?: string;
+    textColor?: string;
+    overlayColor?: string;
+    overlayOpacity?: number;
+    startDate?: string;
+    endDate?: string;
+    isActive: boolean;
+    sortOrder: number;
+    clickCount?: number;
+    viewCount?: number;
+    createdAt: string;
+    updatedAt: string;
 }
 
 // Where a banner can appear. Values are tenant-specific (they map to the
@@ -33,6 +33,6 @@ export interface BannerLocationOption {
     label: string;
     description: string;
     /** Optional override — when this option is selected, the form sets
-     *  banner_type to this value instead of the default 'hero'. */
+     *  bannerType to this value instead of the default 'hero'. */
     bannerType?: string;
 }

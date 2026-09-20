@@ -1,13 +1,13 @@
 export interface MarketplaceConnection {
     id: string;
     platform: 'shopee' | 'tiktok';
-    shop_id: string;
-    shop_name: string;
-    is_active: boolean;
-    token_expires_at: string;
+    shopId: string;
+    shopName: string;
+    isActive: boolean;
+    tokenExpiresAt: string;
     settings?: Record<string, unknown>;
-    created_at: string;
-    updated_at: string;
+    createdAt: string;
+    updatedAt: string;
 }
 
 export const PLATFORM_NAMES: Record<string, string> = {

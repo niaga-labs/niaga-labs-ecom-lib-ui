@@ -66,8 +66,8 @@ function formatTimeUntil(dateStr: string): string {
 }
 
 export function ConnectionCard({ connection, onRefresh, onDisconnect }: ConnectionCardProps) {
-    const isTokenExpiring = new Date(connection.token_expires_at) < new Date(Date.now() + 7 * 24 * 60 * 60 * 1000);
-    const isTokenExpired = new Date(connection.token_expires_at) < new Date();
+    const isTokenExpiring = new Date(connection.tokenExpiresAt) < new Date(Date.now() + 7 * 24 * 60 * 60 * 1000);
+    const isTokenExpired = new Date(connection.tokenExpiresAt) < new Date();
 
     // Get status info
     const getStatusInfo = () => {
@@ -77,7 +77,7 @@ export function ConnectionCard({ connection, onRefresh, onDisconnect }: Connecti
         if (isTokenExpiring) {
             return { icon: Clock, color: 'text-yellow-500', bg: 'bg-yellow-50', text: 'Token Expiring' };
         }
-        if (connection.is_active) {
+        if (connection.isActive) {
             return { icon: CheckCircle2, color: 'text-green-500', bg: 'bg-green-50', text: 'Active' };
         }
         return { icon: XCircle, color: 'text-gray-500', bg: 'bg-gray-50', text: 'Inactive' };
@@ -87,7 +87,7 @@ export function ConnectionCard({ connection, onRefresh, onDisconnect }: Connecti
     const StatusIcon = statusInfo.icon;
 
     return (
-        <Card className={`relative overflow-hidden ${!connection.is_active ? 'opacity-70' : ''}`}>
+        <Card className={`relative overflow-hidden ${!connection.isActive ? 'opacity-70' : ''}`}>
             {/* Platform Color Bar */}
             <div className={`absolute top-0 left-0 right-0 h-1 ${connection.platform === 'shopee' ? 'bg-orange-500' : 'bg-black'}`} />
 
@@ -98,7 +98,7 @@ export function ConnectionCard({ connection, onRefresh, onDisconnect }: Connecti
                             {getPlatformIcon(connection.platform)}
                         </div>
                         <div>
-                            <CardTitle className="text-lg font-semibold">{connection.shop_name}</CardTitle>
+                            <CardTitle className="text-lg font-semibold">{connection.shopName}</CardTitle>
                             <p className="text-sm text-muted-foreground">
                                 {PLATFORM_NAMES[connection.platform] || connection.platform}
                             </p>
@@ -133,7 +133,7 @@ export function ConnectionCard({ connection, onRefresh, onDisconnect }: Connecti
                     <div className="flex items-center gap-2 p-3 rounded-lg bg-yellow-50 border border-yellow-200">
                         <AlertCircle className="h-4 w-4 text-yellow-500 flex-shrink-0" />
                         <div className="flex-1">
-                            <p className="text-sm font-medium text-yellow-700">Token expires {formatTimeUntil(connection.token_expires_at)}</p>
+                            <p className="text-sm font-medium text-yellow-700">Token expires {formatTimeUntil(connection.tokenExpiresAt)}</p>
                         </div>
                         {onRefresh && (
                             <Button size="sm" variant="outline" onClick={() => onRefresh(connection.id)}>
@@ -144,7 +144,7 @@ export function ConnectionCard({ connection, onRefresh, onDisconnect }: Connecti
                     </div>
                 ) : (
                     <p className="text-sm text-muted-foreground">
-                        Connected {formatRelativeTime(connection.created_at)}
+                        Connected {formatRelativeTime(connection.createdAt)}
                     </p>
                 )}
 

@@ -5,6 +5,25 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+### Changed — the admin read types are camelCase, the way the rest of the frontend already is (NIAGA-389)
+
+- The house direction is *backend serialises snake_case, frontend consumes camelCase*, with the admin BFF
+  proxy converting responses. NIAGA-377 moved frontend-admin's own types across; three shapes could not
+  follow, because **this repo owns them and declared them in snake_case** — so frontend-admin had to map
+  *towards* snake_case for `Banner`, `Collection` and `MarketplaceConnection`, the opposite of every other
+  mapper in the codebase and a trap for the next reader.
+- Flipped here: `Banner` (18 fields), `Collection`, `CollectionSummary`, `CategoryInCollection`
+  (13 fields) and `MarketplaceConnection` (6 fields), with `BannerForm`, `CollectionForm` and
+  `ConnectionCard` following.
+- **`CollectionFormData` is deliberately NOT flipped, and there is a comment saying so.** It is the
+  *request body* for create/update collection, and request bodies are forwarded verbatim —
+  service-catalog binds snake_case, so a camelCase key there would be silently dropped under a 200
+  (NIAGA-365). `collections.ts` now holds a camelCase read type next to a snake_case write type on
+  purpose; the same split appears inside `CollectionForm`, where `initialData` is read in camelCase and
+  `InternalFormState` stays snake_case because it feeds the body.
+- Consumers move in the same change set: frontend-admin inverts its three mappers (NIAGA-389, second PR).
+
+
 ### Fixed — `package-lock.json` is tracked, so installs are reproducible (NIAGA-197)
 
 - Commit 8a742ad untracked the lockfile, on the grounds that the consumers' lockfiles cover lib-ui. They
