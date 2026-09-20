@@ -98,6 +98,7 @@ interface FormData {
     preorderLeadDays: number;
     preorderMessage: string;
     sizeChartId: string;
+    supplierId: string;
     isTailorable: boolean;
     isFeatured: boolean;
     isNewArrival: boolean;
@@ -122,6 +123,8 @@ export default function ProductForm({
     const [loadingCategories, setLoadingCategories] = useState(true);
     const [sizeCharts, setSizeCharts] = useState<{ id: string; name: string; gender: string }[]>([]);
     const [loadingSizeCharts, setLoadingSizeCharts] = useState(true);
+    const [suppliers, setSuppliers] = useState<{ id: string; name: string; isActive: boolean }[]>([]);
+    const [loadingSuppliers, setLoadingSuppliers] = useState(true);
     const fileInputRef = useRef<HTMLInputElement>(null);
     const [tagInput, setTagInput] = useState('');
     const [showSeoSection, setShowSeoSection] = useState(false);
@@ -178,6 +181,7 @@ export default function ProductForm({
         preorderLeadDays: initialData?.preorderLeadDays || 14,
         preorderMessage: initialData?.preorderMessage || '',
         sizeChartId: initialData?.sizeChartId || '',
+        supplierId: initialData?.supplierId || '',
         isTailorable: initialData?.isTailorable ?? true,
         isFeatured: initialData?.isFeatured || false,
         isNewArrival: initialData?.isNewArrival || false,
@@ -209,6 +213,23 @@ export default function ProductForm({
             }
         }
         fetchSizeCharts();
+    }, [api]);
+
+    // NIAGA-276. Inactive suppliers are fetched too, not filtered out: a product
+    // already assigned to a supplier that has since stopped trading must still
+    // show who ships it. The option is marked instead, and only the picker's
+    // NEW choices are steered towards active ones.
+    useEffect(() => {
+        async function fetchSuppliers() {
+            try {
+                setSuppliers(await api.getSuppliers());
+            } catch (error) {
+                console.error('Failed to fetch suppliers:', error);
+            } finally {
+                setLoadingSuppliers(false);
+            }
+        }
+        fetchSuppliers();
     }, [api]);
 
     useEffect(() => {
@@ -489,6 +510,8 @@ export default function ProductForm({
                 preorder_lead_days: formData.allowPreorder ? formData.preorderLeadDays : undefined,
                 preorder_message: formData.allowPreorder && formData.preorderMessage ? formData.preorderMessage : undefined,
                 size_chart_id: formData.sizeChartId || undefined,
+                // NIAGA-276: '' means "no supplier", which the API stores as NULL.
+                supplier_id: formData.supplierId || undefined,
                 is_tailorable: formData.isTailorable,
                 is_featured: formData.isFeatured,
                 is_new_arrival: formData.isNewArrival,
@@ -1576,6 +1599,25 @@ export default function ProductForm({
                                             ))}
                                         </select>
                                         <p className="text-xs text-gray-500 mt-1">Optional - helps customers find their size</p>
+                                    </div>
+                                    <div>
+                                        <label className="block text-sm text-gray-600 mb-1">Supplier</label>
+                                        <select
+                                            value={formData.supplierId}
+                                            onChange={(e) => setFormData({ ...formData, supplierId: e.target.value })}
+                                            className="w-full px-3 py-2 border border-gray-300 rounded-lg"
+                                            disabled={loadingSuppliers}
+                                        >
+                                            <option value="">{loadingSuppliers ? 'Loading...' : 'We ship this ourselves'}</option>
+                                            {suppliers.map((supplier) => (
+                                                <option key={supplier.id} value={supplier.id}>
+                                                    {supplier.name}{supplier.isActive ? '' : ' (inactive)'}
+                                                </option>
+                                            ))}
+                                        </select>
+                                        <p className="text-xs text-gray-500 mt-1">
+                                            Who dispatches this product. Leave unset for factory-direct lines we ship ourselves.
+                                        </p>
                                     </div>
                                     <div>
                                         <label className="block text-sm text-gray-600 mb-1">Tags</label>

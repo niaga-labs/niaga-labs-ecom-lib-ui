@@ -5,6 +5,20 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+### Added — the product form can name the supplier who ships a product (NIAGA-276)
+
+- `ProductFormApi` gains `getSuppliers()`, `Product` gains `supplierId`, and the form sends
+  `supplier_id` alongside `size_chart_id`. A new `SupplierOption` carries only `id`, `name` and
+  `isActive` — the full supplier record (contacts, dispatch days, notes) belongs to the suppliers
+  admin page, not to this form.
+- **Inactive suppliers are fetched and shown, marked `(inactive)`, rather than filtered out.** A
+  product already assigned to a supplier that has since stopped trading must still say who ships it;
+  hiding inactive ones would blank that product's supplier the moment it was deactivated.
+- The empty option reads **"We ship this ourselves"** rather than "None", because that is what an
+  unset supplier means for the factory-direct lines — `supplier_id` is nullable on purpose.
+- Note for whoever adds the next field here: this form already had a free-text **Vendor** input that
+  is local state and is sent nowhere. The supplier picker is the one that reaches the API.
+
 ### Fixed — the product form sent the low-stock COLUMN name, so the threshold was never saved (NIAGA-404)
 
 - `ProductForm`'s payload sent `low_stock_thresh`. service-catalog binds **`low_stock_threshold`** —
