@@ -464,7 +464,13 @@ export default function ProductForm({
                 sale_price: formData.compareAtPrice > 0 ? formData.price : undefined,
                 cost: formData.costPerItem > 0 ? formData.costPerItem : undefined,
                 stock_quantity: hasVariantsToSave ? undefined : formData.quantity,
-                low_stock_thresh: formData.lowStockThreshold,
+                // NIAGA-404: the JSON name is low_stock_threshold, NOT the column
+                // name. service-catalog's request binds `json:"low_stock_threshold"`
+                // onto a field whose gorm column is `low_stock_thresh` -- the two
+                // differ by one word, and this form was sending the column name. The
+                // key was therefore absent from the body: 0 on create, untouched on
+                // update, so the threshold set here was never saved.
+                low_stock_threshold: formData.lowStockThreshold,
                 manage_stock: formData.trackInventory,
                 is_active: status === 'active',
                 tags: formData.tags.length > 0 ? formData.tags : undefined,

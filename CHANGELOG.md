@@ -5,6 +5,24 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+### Fixed — the product form sent the low-stock COLUMN name, so the threshold was never saved (NIAGA-404)
+
+- `ProductForm`'s payload sent `low_stock_thresh`. service-catalog binds **`low_stock_threshold`** —
+  `json:"low_stock_threshold"` on a field whose gorm column is `low_stock_thresh` (`models/product.go:40`,
+  and the column in `catalog.products` really is the short one). **The two differ by one word, and the
+  form was sending the column name.**
+- The key was therefore absent from the body: `LowStockThresh` stayed **0** on create, and on update
+  `req.LowStockThresh` was `nil` so the value was left alone. **The low-stock threshold typed into the
+  admin product form has never been saved.**
+- **The ticket's premise was that this payload is camelCase. It is not.** `apiData` is a static object
+  literal in snake_case — `category_id`, `base_price`, `is_active`, `meta_title`, `is_new_arrival` and the
+  rest all match what the handler binds. What is camelCase is frontend-admin's `ProductInput` *type*,
+  which the form bypasses with `as any`; that is why nothing ever complained. Twenty-six keys were checked
+  against the handler's request struct and exactly one was wrong.
+- Two more are dropped for a different reason — `is_tailorable` and `size_chart_id` exist as columns and
+  on `models.Product` but are not bound by the create/update request. That is **NIAGA-420**.
+
+
 ### Changed — the admin read types are camelCase, the way the rest of the frontend already is (NIAGA-389)
 
 - The house direction is *backend serialises snake_case, frontend consumes camelCase*, with the admin BFF
