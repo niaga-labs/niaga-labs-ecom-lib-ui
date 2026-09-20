@@ -179,6 +179,7 @@ export interface Product {
 
     sizeChartId?: string;
     isTailorable?: boolean;
+    supplierId?: string;
 
     createdAt: string;
     updatedAt: string;
@@ -285,6 +286,15 @@ export interface SizeChartOption {
     gender: string;
 }
 
+// NIAGA-276: who ships a product. Only the fields the picker renders — the
+// full supplier record (contacts, dispatch days, notes) belongs to the
+// suppliers admin page, not to the product form.
+export interface SupplierOption {
+    id: string;
+    name: string;
+    isActive: boolean;
+}
+
 // Lightweight marketplace-connection shape used by the form's Shopee
 // publish flow. Mirrors the runtime shape getConnections returns.
 export interface ProductFormMarketplaceConnection {
@@ -298,6 +308,7 @@ export interface ProductFormMarketplaceConnection {
 export interface ProductFormApi {
     getCategories: () => Promise<ProductCategoryOption[]>;
     getSizeCharts: () => Promise<SizeChartOption[]>;
+    getSuppliers: () => Promise<SupplierOption[]>;
     getProduct: (id: string) => Promise<Product>;
     createProduct: (input: ProductInput) => Promise<Product>;
     updateProduct: (id: string, input: ProductInput) => Promise<Product>;
