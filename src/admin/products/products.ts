@@ -247,11 +247,15 @@ export interface ProductInput extends CreateProductInput {
     manageStock?: boolean;
 }
 
+// A RESPONSE shape, so camelCase: the admin BFF proxy renames every response
+// key, and the snake_case version compiled while `new_url` read undefined --
+// background removal set the image to undefined instead of the new URL
+// (NIAGA-436).
 export interface RemoveBackgroundResponse {
-    product_id: string;
-    image_id: string;
-    old_url: string;
-    new_url: string;
+    productId: string;
+    imageId: string;
+    oldUrl: string;
+    newUrl: string;
 }
 
 export interface ProductColor {
