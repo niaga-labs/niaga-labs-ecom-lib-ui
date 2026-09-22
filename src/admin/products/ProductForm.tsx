@@ -380,9 +380,9 @@ export default function ProductForm({
             const result = await api.removeImageBackground(initialData.id, mediaItem.id);
             setFormData(prev => ({
                 ...prev,
-                images: prev.images.map((img, i) => i === index ? result.new_url : img)
+                images: prev.images.map((img, i) => i === index ? result.newUrl : img)
             }));
-            setPendingBgRemovals(prev => [...prev, { imageId: mediaItem.id, newUrl: result.new_url }]);
+            setPendingBgRemovals(prev => [...prev, { imageId: mediaItem.id, newUrl: result.newUrl }]);
             showToast('Background removed successfully!', 'success');
         } catch (error) {
             console.error('Error removing background:', error);

@@ -5,6 +5,19 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+### Fixed — `RemoveBackgroundResponse` was snake_case, so the product form set the image to `undefined` (NIAGA-436)
+
+- The admin's BFF proxy camelCases every response key, so what arrives is `newUrl`. The interface
+  declared `new_url`, which compiled, and `ProductForm.tsx` read `result.new_url` — `undefined` —
+  into both the image list and the pending-removal record. Background removal appeared to work and
+  put nothing back.
+- Response keys only. `MFASetupResponse` and `MFAStatus` in `src/admin/auth/MFASetup.tsx` were
+  checked and **left snake_case**: those come from `/admin/api/auth/*`, a passthrough route that
+  does not convert, so there they are correct. `methods: ('totp' | 'backup_codes')[]` is a value,
+  not a key.
+- Paired with the frontend-admin half of NIAGA-436; lib-ui merges first.
+
+
 ### Added — the product form can name the supplier who ships a product (NIAGA-276)
 
 - `ProductFormApi` gains `getSuppliers()`, `Product` gains `supplierId`, and the form sends
