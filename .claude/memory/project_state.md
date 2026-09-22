@@ -20,7 +20,7 @@ metadata:
   fields but no request fields — **NIAGA-420**.
 - **Next**: nothing outstanding here from this unit.
 
-## 2026-09-21 state (resume here) — NIAGA-389
+## 2026-09-21 state — NIAGA-389
 
 - **The admin read types are camelCase now**: `Banner`, `Collection`, `CollectionSummary`,
   `CategoryInCollection`, `MarketplaceConnection`, plus `BannerForm`, `CollectionForm`, `ConnectionCard`.
@@ -35,7 +35,7 @@ metadata:
 - Verified 2026-09-21: `npm run type-check` clean, exit 0.
 - **Next**: nothing outstanding here from this unit.
 
-## 2026-09-13 state (resume here)
+## 2026-09-13 state
 
 - **Repo:** the Claude Code layer added (CLAUDE.md, memory, this file) — NIAGA-273 (HQ-58's umbrella).
   Check `git log -1` for the current sha; this note goes stale the moment the PR merges.
