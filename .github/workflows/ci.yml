@@ -1,0 +1,26 @@
+name: CI
+
+# NIAGA-19. lib-ui was the one repo in the platform with no workflow at all,
+# while all three frontends build against it (`file:../lib-ui`). A type error
+# here surfaced only in a frontend's build, as that frontend's failure.
+# lib-ui has no lint script and no tests yet, so the gate is the type check.
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  type-check:
+    name: Type check
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          # the frontends' CI runs 20
+          node-version: "20"
+          cache: npm
+      - run: npm ci
+      - run: npm run type-check
