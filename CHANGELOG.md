@@ -5,6 +5,14 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+### Added — CI: a type check on every PR (NIAGA-19)
+
+- `.github/workflows/ci.yml`: `npm ci` + `npm run type-check` on Node 20, the
+  frontends' version. lib-ui was the only repo with no workflow; a type error
+  here showed up only as a frontend's build failure. Proved locally in a clean
+  clone under `node:20`: exit 0 on main, exit 2 with a deliberate type error.
+  The first real run after 2026-10-01 (HQ-126) confirms it.
+
 ### Fixed — `RemoveBackgroundResponse` was snake_case, so the product form set the image to `undefined` (NIAGA-436)
 
 - The admin's BFF proxy camelCases every response key, so what arrives is `newUrl`. The interface

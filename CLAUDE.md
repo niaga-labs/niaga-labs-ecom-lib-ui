@@ -23,6 +23,7 @@ rules live in `~/.claude/`; this file only adds what is specific here.
 
 ## Conventions that differ from the global rules
 
+- **CI runs `npm run type-check` on every PR (NIAGA-19).** There is no lint script and no test yet, so the type check is the whole gate.
 - **A `file:` dependency is a symlink holding an absolute path.** If this workspace folder is ever moved or
   renamed, every consuming frontend needs `npm install` re-run to relink it — `package-lock.json` is
   untouched, so the breakage is silent until something imports from here (NIAGA-167, the 2026-09-02 rename).
