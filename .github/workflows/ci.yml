@@ -24,3 +24,26 @@ jobs:
           cache: npm
       - run: npm ci
       - run: npm run type-check
+
+  # NIAGA-475: the same dependency scan the three frontends got in NIAGA-304.
+  # lib-ui has its own lockfile, and `next` is a peer npm installs into it, so
+  # an advisory here is not seen by the frontends' audits. No continue-on-error
+  # and no `|| true`: a high or critical advisory turns this job red.
+  security:
+    name: Security Audit
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+      - name: Run npm audit
+        shell: bash  # -eo pipefail, so npm audit's exit code survives the tee
+        run: npm audit --audit-level=high | tee audit-report.txt
+      - name: Upload the report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: npm-audit-report
+          path: audit-report.txt
+          if-no-files-found: error

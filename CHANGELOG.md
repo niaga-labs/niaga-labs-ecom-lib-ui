@@ -5,6 +5,19 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+### Security — postcss pinned past the high advisory; CI audits lib-ui's own lockfile (NIAGA-475)
+
+- `npm audit --audit-level=high` exited 1: postcss 8.4.31 (<=8.5.22, GHSA-qx2v-qp2m-jg93 and three
+  source-map advisories), pinned exactly by `next`. `package.json` now carries
+  `"overrides": { "postcss": "^8.5.28" }`, so lib-ui resolves 8.5.28 everywhere. After: **0
+  vulnerabilities at every severity** (was 1 high, 1 moderate — the moderate was `next` itself, flagged
+  only for its postcss). `npm audit fix --force` (next@16) was not taken.
+- The ticket said `next` was a runtime dependency. It is not; it was already a peer. npm 7+ installs
+  peers, which is how it reached the lockfile. An override is the smallest fix: it applies only to
+  lib-ui's own install, and the frontends resolve their own `next` and already audited clean.
+- `.github/workflows/ci.yml`: a `Security Audit` job, the same shape as the frontends' (NIAGA-304).
+- The reinstall also moved `node_modules/next` from a stale 14.2.35 to the lockfile's 15.5.25.
+
 ### Added — CI: a type check on every PR (NIAGA-19)
 
 - `.github/workflows/ci.yml`: `npm ci` + `npm run type-check` on Node 20, the
